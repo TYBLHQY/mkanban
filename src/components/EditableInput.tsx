@@ -1,4 +1,4 @@
-import { clearEmptyContent, focusAndMoveToEnd, focusAndSelectAll } from "@/hooks/useFocusSelection";
+import { clearEmptyContent, focusAndSelectAll } from "@/hooks/useFocusSelection";
 import { useStore } from "@/stores/store";
 import { defineComponent, ref, watch, type PropType } from "vue";
 
@@ -6,6 +6,8 @@ export default defineComponent(
   (props, { emit }) => {
     const store = useStore();
     const contentRef = ref<HTMLDivElement>();
+    const syncContent = ref<string>(props.content);
+    const originalContent = ref<string>(props.content);
 
     const handleClick = async () => {
       if (props.editing) return;
@@ -28,30 +30,35 @@ export default defineComponent(
       }
     };
 
-    const localContent = ref<string>(props.content);
+    const handleInput = async () => {
+      clearEmptyContent(contentRef);
+      syncContent.value = contentRef.value?.textContent!;
+      emit("update:content", syncContent.value);
+    };
+
+    const handleBlur = () => {
+      originalContent.value = props.content;
+    };
+
     watch(
       () => contentRef.value,
       _ => contentRef.value && (contentRef.value.textContent = props.content),
       { immediate: true },
     );
-    const handleInput = async () => {
-      clearEmptyContent(contentRef);
-      localContent.value = contentRef.value?.textContent!;
-      await focusAndMoveToEnd(contentRef);
-    };
 
     return () => (
       <div
         class={[
           "empty:before:text-ctp-overlay0 wrap-break-word transition-all empty:before:content-[attr(placeholder)]",
           props.editing ? "rounded border p-1" : "cursor-pointer",
-          props.editing && (localContent.value === props.content ? "border-ctp-surface0" : "border-ctp-peach"),
+          props.editing && (syncContent.value === originalContent.value ? "border-ctp-surface0" : "border-ctp-peach"),
         ]}
         ref={contentRef}
         contenteditable={props.editing ? "plaintext-only" : false}
         onClick={handleClick}
         onKeydown={handleKeyDown}
         onInput={handleInput}
+        onBlur={handleBlur}
         placeholder={props.placeholder}
       />
     );

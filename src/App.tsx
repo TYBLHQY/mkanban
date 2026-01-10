@@ -23,9 +23,5 @@ export default defineComponent(() => {
     { immediate: true },
   );
 
-  return () => (
-    <div class={store.themeClass}>
-      <RouterView />
-    </div>
-  );
+  return () => <RouterView />;
 });

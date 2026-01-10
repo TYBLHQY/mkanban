@@ -43,56 +43,52 @@ export default defineComponent(
       <div class="flex flex-col gap-3 p-3">
         <div class="flex items-center justify-between">
           <EditableInput
+            class="flex-1 font-semibold text-shadow-lg"
             editing={editing.value}
             content={props.col.doc.title}
+            placeholder="Column Title"
             onUpdate:editing={val => (editing.value = val)}
             onUpdate:content={val => (props.col.doc.title = val)}
             onUpdate:update={updateCol}
-            placeholder="Column Title"
-            class="flex-1 font-semibold text-shadow-lg"
           />
-          {!editing.value && !store.globalEditing && (
-            <IconAdd
-              class="text-ctp-lavender hover:text-ctp-yellow ml-2 cursor-pointer transition-colors"
-              onClick={addCard}
+          <IconAdd
+            class="text-ctp-lavender hover:text-ctp-yellow ml-2 cursor-pointer transition-colors"
+            v-show={!editing.value && !store.globalEditing}
+            onClick={addCard}
+          />
+          <div
+            class="group"
+            v-show={store.globalEditing}>
+            <IconDeleteOutline class="text-ctp-red ml-2 cursor-pointer group-hover:hidden" />
+            <IconDeleteEmptyOutline
+              class="text-ctp-red ml-2 hidden cursor-pointer group-hover:block"
+              onClick={removeCol}
             />
-          )}
-          {store.globalEditing && (
-            <div class="group">
-              <IconDeleteOutline class="text-ctp-red ml-2 cursor-pointer group-hover:hidden" />
-              <IconDeleteEmptyOutline
-                class="text-ctp-red ml-2 hidden cursor-pointer group-hover:block"
-                onClick={removeCol}
-              />
-            </div>
-          )}
-        </div>
-        {(editing.value || props.col.doc.description) && (
-          <div class="flex items-center gap-2">
-            {store.globalEditing && props.col.position > 0 && (
-              <IconArrowLeftBoldBoxOutline
-                class="text-ctp-yellow cursor-pointer"
-                onClick={() => moveCol("prev")}
-              />
-            )}
-           
-            <EditableInput
-              class="flex-1"
-              editing={editing.value}
-              content={props.col.doc.description || ""}
-              onUpdate:editing={val => (editing.value = val)}
-              onUpdate:content={val => (props.col.doc.description = val)}
-              placeholder="Column Description"
-              onUpdate:update={updateCol}
-            />
-            {store.globalEditing && props.col.position < props.colsLen - 1 && (
-              <IconArrowRightBoldBoxOutline
-                class="text-ctp-yellow cursor-pointer"
-                onClick={() => moveCol("next")}
-              />
-            )}
           </div>
-        )}
+        </div>
+        <div
+          class="flex items-center gap-2"
+          v-show={editing.value || props.col.doc.description}>
+          <IconArrowLeftBoldBoxOutline
+            class="text-ctp-yellow cursor-pointer"
+            v-show={store.globalEditing && props.col.position > 0}
+            onClick={() => moveCol("prev")}
+          />
+          <EditableInput
+            class="flex-1"
+            editing={editing.value}
+            content={props.col.doc.description || ""}
+            placeholder="Column Description"
+            onUpdate:editing={val => (editing.value = val)}
+            onUpdate:content={val => (props.col.doc.description = val)}
+            onUpdate:update={updateCol}
+          />
+          <IconArrowRightBoldBoxOutline
+            class="text-ctp-yellow cursor-pointer"
+            v-show={store.globalEditing && props.col.position < props.colsLen - 1}
+            onClick={() => moveCol("next")}
+          />
+        </div>
       </div>
     );
   },

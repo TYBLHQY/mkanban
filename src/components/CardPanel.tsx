@@ -1,5 +1,5 @@
 import EditableInput from "@/components/EditableInput";
-import { getNeighborByParentId, updateById } from "@/database/api";
+import { getNeighborByParentId, removeById, updateById } from "@/database/api";
 import { useStore } from "@/stores/store";
 import type { BoardData, Direction } from "@/types";
 import { defineComponent, ref, watch, type PropType } from "vue";
@@ -9,7 +9,7 @@ import IconDeleteEmptyOutline from "~icons/mdi/delete-empty-outline";
 import IconDeleteOutline from "~icons/mdi/delete-outline";
 
 export default defineComponent(
-  props => {
+  (props, { emit }) => {
     const store = useStore();
     const editing = ref<boolean>(false);
 
@@ -27,56 +27,55 @@ export default defineComponent(
       { immediate: true },
     );
 
-    const removeCard = () => {};
+    const removeCard = async () => {
+      await removeById(props.card.id);
+      emit("update:remove");
+    };
 
     return () => (
-      <div>
-        <div class="bg-ctp-base border-ctp-surface0 hover:border-ctp-mauve relative flex flex-col gap-3 rounded border-2 p-3 transition-colors">
-          <EditableInput
-            editing={editing.value}
-            content={props.card.doc.title}
-            onUpdate:editing={val => (editing.value = val)}
-            onUpdate:content={val => (props.card.doc.title = val)}
-            onUpdate:update={updateCard}
-            placeholder="Card Title"
-            class="font-semibold"
-          />
-
-          {(editing.value || props.card.doc.description) && (
+      <div class="group bg-ctp-base border-ctp-surface0 hover:border-ctp-mauve relative rounded border-2 transition-colors">
+        <div class="flex flex-col gap-3 p-3">
+          <div class="flex">
             <EditableInput
+              class="flex-1 font-semibold"
               editing={editing.value}
-              content={props.card.doc.description || ""}
+              content={props.card.doc.title}
               onUpdate:editing={val => (editing.value = val)}
-              onUpdate:content={val => (props.card.doc.description = val)}
+              onUpdate:content={val => (props.card.doc.title = val)}
               onUpdate:update={updateCard}
-              placeholder="Card Description"
-              class="text-xs"
+              placeholder="Card Title"
             />
-          )}
+            <div
+              class="group flex cursor-pointer items-center pl-3"
+              v-show={store.globalEditing || editing.value}
+              onClick={removeCard}>
+              <IconDeleteOutline class="text-ctp-red group-hover:hidden" />
+              <IconDeleteEmptyOutline class="text-ctp-red hidden group-hover:block" />
+            </div>
+          </div>
+
+          <EditableInput
+            class={{ "text-xs": !editing.value }}
+            v-show={editing.value || props.card.doc.description}
+            editing={editing.value}
+            content={props.card.doc.description || ""}
+            onUpdate:editing={val => (editing.value = val)}
+            onUpdate:content={val => (props.card.doc.description = val)}
+            onUpdate:update={updateCard}
+            placeholder="Card Description"
+          />
         </div>
 
-        {store.globalEditing && (
-          <div class="group absolute right-1/2 bottom-0 flex translate-x-1/2 translate-y-1/2 items-center opacity-0 transition-opacity group-hover:opacity-100">
-            <IconDeleteOutline class="text-ctp-red ml-2 cursor-pointer group-hover:hidden" />
-            <IconDeleteEmptyOutline
-              class="text-ctp-red ml-2 hidden cursor-pointer group-hover:block"
-              onClick={removeCard}
-            />
-          </div>
-        )}
-
-        {props.col.position > 0 && (
-          <IconArrowLeft
-            class="text-ctp-lavender hover:text-ctp-yellow absolute top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer opacity-0 transition-[opacity,colors] group-hover:opacity-100"
-            onClick={() => moveCard(props.card.id, "prev")}
-          />
-        )}
-        {props.col.position < props.colsLen - 1 && (
-          <IconArrowRight
-            class="text-ctp-lavender hover:text-ctp-yellow absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 cursor-pointer opacity-0 transition-[opacity,colors] group-hover:opacity-100"
-            onClick={() => moveCard(props.card.id, "next")}
-          />
-        )}
+        <IconArrowLeft
+          class="text-ctp-lavender hover:text-ctp-yellow absolute top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer opacity-0 transition-[opacity,colors] group-hover:opacity-100"
+          v-show={props.col.position > 0}
+          onClick={() => moveCard(props.card.id, "prev")}
+        />
+        <IconArrowRight
+          class="text-ctp-lavender hover:text-ctp-yellow absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 cursor-pointer opacity-0 transition-[opacity,colors] group-hover:opacity-100"
+          v-show={props.col.position < props.colsLen - 1}
+          onClick={() => moveCard(props.card.id, "next")}
+        />
       </div>
     );
   },
@@ -86,5 +85,6 @@ export default defineComponent(
       card: Object as PropType<BoardData>,
       colsLen: Number as PropType<number>,
     },
+    emits: ["update:remove"],
   },
 );

@@ -53,23 +53,22 @@ export default defineComponent(() => {
           onUpdate:removeCol={getColList}
         />
       ))}
-      {store.globalEditing && (
-        <div
-          class="group border-ctp-surface1 hover:border-ctp-mauve flex rounded border-4 border-dashed p-3"
-          onClick={addCol}>
-          <IconAdd class="text-ctp-surface2 group-hover:text-ctp-mauve" />
-        </div>
-      )}
-      {colList.value.length === 0 && (
-        <div class="absolute right-1/2 bottom-1/2 translate-x-1/2 translate-y-1/2">
-          <img
-            class="w-20"
-            src={Logo}
-            alt="facicon"
-            style={{ filter: "grayscale(100%)" }}
-          />
-        </div>
-      )}
+      <div
+        class="group border-ctp-surface1 hover:border-ctp-mauve flex rounded border-4 border-dashed p-3"
+        v-show={store.globalEditing}
+        onClick={addCol}>
+        <IconAdd class="text-ctp-surface2 group-hover:text-ctp-mauve" />
+      </div>
+      <div
+        class="absolute right-1/2 bottom-1/2 translate-x-1/2 translate-y-1/2"
+        v-show={colList.value.length === 0}>
+        <img
+          class="w-20"
+          src={Logo}
+          alt="facicon"
+          style={{ filter: "grayscale(100%)" }}
+        />
+      </div>
     </div>
   );
 });

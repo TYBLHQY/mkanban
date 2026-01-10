@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     tags:
-      - "v*.*.*"
+      - "app-v*.*.*"
 
 jobs:
   publish-tauri:

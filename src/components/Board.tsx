@@ -60,7 +60,7 @@ export default defineComponent(() => {
         <IconAdd class="text-ctp-surface2 group-hover:text-ctp-mauve" />
       </div>
       <div
-        class="absolute right-1/2 bottom-1/2 translate-x-1/2 translate-y-1/2"
+        class="pointer-events-none absolute right-1/2 bottom-1/2 translate-x-1/2 translate-y-1/2 select-none"
         v-show={colList.value.length === 0}>
         <img
           class="w-20"

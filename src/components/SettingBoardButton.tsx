@@ -1,4 +1,4 @@
-import { getListByParentId, removeById, removeByParentId, setPreferences, updateById } from "@/database/api";
+import { removeById, setPreferences, updateById } from "@/database/api";
 import { clearEmptyContent, focusAndMoveToEnd, focusAndSelectAll } from "@/hooks/useFocusSelection";
 import { useStore } from "@/stores/store";
 import type { BoardData } from "@/types";
@@ -19,10 +19,19 @@ export default defineComponent(
       emit("update:update");
     };
 
+    // const removeBoard = (event: MouseEvent, id: string) => {
+    //   event.stopPropagation();
+    //   getListByParentId(id).then(cols => cols.forEach(col => removeByParentId(col.id)));
+    //   removeByParentId(id);
+    //   removeById(id).then(() => emit("update:update"));
+    //   if (id === store.openedBoardId) {
+    //     store.openedBoardId = "";
+    //     setPreferences({ opened_board_id: "" });
+    //   }
+    // };
+
     const removeBoard = (event: MouseEvent, id: string) => {
       event.stopPropagation();
-      getListByParentId(id).then(cols => cols.forEach(col => removeByParentId(col.id)));
-      removeByParentId(id);
       removeById(id).then(() => emit("update:update"));
       if (id === store.openedBoardId) {
         store.openedBoardId = "";

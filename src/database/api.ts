@@ -14,7 +14,6 @@ export async function init() {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
-
     CREATE INDEX IF NOT EXISTS idx_card_title
     ON boards (json_extract(doc, '$.title'))
     WHERE type = 'card';
@@ -83,7 +82,44 @@ export async function updateById(id: string, data: { parent_id?: string; positio
 
 export async function removeById(id: string) {
   const db = await DB();
-  await db.execute(`DELETE FROM boards WHERE id = ?`, [id]);
+  await db.execute(
+    `
+    WITH RECURSIVE
+    target AS (
+      SELECT id, parent_id, position AS deleted_pos
+      FROM boards
+      WHERE id = ?
+    ),
+    subtree AS (
+      SELECT id FROM boards WHERE id = (SELECT id FROM target)
+      UNION ALL
+      SELECT b.id
+      FROM boards b
+      JOIN subtree s ON b.parent_id = s.id
+    )
+    DELETE FROM boards
+    WHERE id IN (SELECT id FROM subtree);
+
+    WITH RECURSIVE
+    target AS (
+      SELECT id, parent_id, position AS deleted_pos
+      FROM boards
+      WHERE id = ?
+    )
+    UPDATE boards
+
+    SET
+    position = position - 1,
+    updated_at = CURRENT_TIMESTAMP
+
+    WHERE
+    position > (SELECT deleted_pos FROM target)
+    AND (
+      parent_id IS (SELECT parent_id FROM target)
+      OR (parent_id IS NULL AND (SELECT parent_id FROM target) IS NULL)
+    )`,
+    [id, id],
+  );
 }
 
 export async function removeByParentId(parentId: string) {

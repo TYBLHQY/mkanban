@@ -33,8 +33,7 @@ jobs:
         if: matrix.platform == 'ubuntu-22.04' # This must match the platform value defined above.
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
-
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libgtk-3-dev pkg-config
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
@@ -68,7 +67,7 @@ jobs:
         with:
           tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
           releaseName: "App v__VERSION__"
-          releaseBody: "See the assets to download this version and install."
+          releaseBody: "选择对应版本下载。"
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}

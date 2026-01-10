@@ -13,12 +13,6 @@ export default defineComponent(
     const store = useStore();
     const editing = ref<boolean>(false);
 
-    const moveCard = async (id: string, dir: Direction) => {
-      const newParent: BoardData = await getNeighborByParentId(store.openedBoardId, props.col.position, dir);
-      await updateById(id, { parent_id: newParent?.id });
-      store.updatedCols = new Set([props.col.position, newParent.position]);
-    };
-
     const updateCard = () => updateById(props.card.id, { doc: props.card.doc });
 
     watch(
@@ -30,6 +24,12 @@ export default defineComponent(
     const removeCard = async () => {
       await removeById(props.card.id);
       emit("update:remove");
+    };
+
+    const moveCard = async (id: string, dir: Direction) => {
+      const newParent: BoardData = await getNeighborByParentId(store.openedBoardId, props.col.position, dir);
+      await updateById(id, { parent_id: newParent?.id });
+      store.updatedCols = new Set([props.col.position, newParent.position]);
     };
 
     return () => (

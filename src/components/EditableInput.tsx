@@ -20,12 +20,14 @@ export default defineComponent(
         e.preventDefault();
         contentRef.value?.blur();
         !store.globalEditing && emit("update:editing", false);
+        originalContent.value = contentRef.value?.textContent?.trim() || "";
         emit("update:content", contentRef.value?.textContent?.trim());
         emit("update:update");
       }
       if (e.key === "Escape") {
-        contentRef.value?.blur();
-        contentRef.value && (contentRef.value.textContent = props.content);
+        if (!contentRef.value) return;
+        contentRef.value.blur();
+        syncContent.value = originalContent.value = contentRef.value.textContent = originalContent.value;
         !store.globalEditing && emit("update:editing", false);
       }
     };
@@ -36,10 +38,6 @@ export default defineComponent(
       emit("update:content", syncContent.value);
     };
 
-    const handleBlur = () => {
-      originalContent.value = props.content;
-    };
-
     watch(
       () => contentRef.value,
       _ => contentRef.value && (contentRef.value.textContent = props.content),
@@ -48,17 +46,12 @@ export default defineComponent(
 
     return () => (
       <div
-        class={[
-          "empty:before:text-ctp-overlay0 wrap-break-word transition-all empty:before:content-[attr(placeholder)]",
-          props.editing ? "rounded border p-1" : "cursor-pointer",
-          props.editing && (syncContent.value === originalContent.value ? "border-ctp-surface0" : "border-ctp-peach"),
-        ]}
+        class={["empty:before:text-ctp-overlay0 border-ctp-surface0 wrap-break-word transition-all empty:before:content-[attr(placeholder)]", props.editing ? "rounded border p-1" : "cursor-pointer"]}
         ref={contentRef}
         contenteditable={props.editing ? "plaintext-only" : false}
         onClick={handleClick}
         onKeydown={handleKeyDown}
         onInput={handleInput}
-        onBlur={handleBlur}
         placeholder={props.placeholder}
       />
     );

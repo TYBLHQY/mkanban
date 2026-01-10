@@ -70,7 +70,7 @@ export default defineComponent(
     return () => (
       <div
         class={[
-          "bg-ctp-mantle border-ctp-mantle flex cursor-pointer gap-2 rounded-lg border-2 p-2 pr-7 pl-6 whitespace-nowrap select-none",
+          "bg-ctp-mantle border-ctp-mantle flex cursor-pointer items-center gap-2 rounded-lg border-2 p-2 pr-7 pl-6 whitespace-nowrap select-none",
           { "border-ctp-peach": store.openedBoardId === props.board.id },
           { "hover:border-ctp-mauve": store.openedBoardId !== props.board.id },
         ]}
@@ -88,7 +88,7 @@ export default defineComponent(
           </div>
         </div>
         <div
-          class={["empty:before:text-ctp-overlay0 leading-none underline-offset-5 outline-0 empty:before:content-[attr(placeholder)]", { underline: editing.value }]}
+          class={["empty:before:text-ctp-overlay0 underline-offset-5 outline-0 empty:before:content-[attr(placeholder)]", { underline: editing.value }]}
           ref={contentRef}
           contenteditable={editing.value ? "plaintext-only" : false}
           onKeydown={handleKeyDown}

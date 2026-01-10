@@ -1,4 +1,3 @@
-import Home from "@/views/Home.tsx";
 import { createRouter, createWebHistory } from "vue-router";
 
 const router = createRouter({
@@ -6,8 +5,13 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      name: "home",
-      component: Home,
+      component: () => import("@/layouts/MainLayout"),
+      children: [
+        {
+          path: "",
+          component: () => import("@/views/Home"),
+        },
+      ],
     },
   ],
 });

@@ -1,7 +1,7 @@
 import { getInfo, getPreferences } from "@/database/api";
-import MainLayout from "@/layouts/MainLayout";
 import { useStore } from "@/stores/store";
 import { defineComponent, watch } from "vue";
+import { RouterView } from "vue-router";
 
 export default defineComponent(() => {
   const store = useStore();
@@ -23,5 +23,9 @@ export default defineComponent(() => {
     { immediate: true },
   );
 
-  return () => <MainLayout class={store.themeClass} />;
+  return () => (
+    <div class={store.themeClass}>
+      <RouterView />
+    </div>
+  );
 });

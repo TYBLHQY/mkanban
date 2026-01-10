@@ -59,10 +59,10 @@ export default defineComponent(() => {
         <div class="shadow-ctp-crust bg-ctp-surface0 absolute top-[0.01rem] left-[0.01rem] flex -translate-x-full -translate-y-full flex-row gap-3 rounded-2xl rounded-br-none p-2">
           <div class="flex flex-col-reverse gap-3">
             <div
-              class="bg-ctp-mantle border-ctp-mantle hover:border-ctp-mauve flex cursor-pointer gap-2 rounded-lg border-2 p-2 pr-7 pl-6 whitespace-nowrap select-none"
+              class="bg-ctp-mantle border-ctp-mantle hover:border-ctp-mauve flex cursor-pointer items-center gap-2 rounded-lg border-2 p-2 pr-7 pl-6 whitespace-nowrap select-none"
               onClick={setTheme}>
               <IconPalette />
-              <div class="leading-none">{store.theme}</div>
+              <div>{store.theme}</div>
             </div>
             <div
               class={["border-ctp-surface2 flex cursor-pointer justify-center rounded-lg border-2 p-2", { "border-ctp-yellow animate-pulse": store.globalEditing }]}

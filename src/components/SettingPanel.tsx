@@ -41,6 +41,7 @@ export default defineComponent(
             {store.theme}
           </div>
           <div
+            v-show={boardList.value.length > 0}
             class={["border-ctp-surface2 flex cursor-pointer justify-center rounded-lg border-2 p-2", { "border-ctp-yellow animate-pulse": store.globalEditing }]}
             onClick={setGlobalEditing}>
             <IconEditOutline class={["text-ctp-surface2", { "text-ctp-yellow animate-pulse": store.globalEditing }]} />

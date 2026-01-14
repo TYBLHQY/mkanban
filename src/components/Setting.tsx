@@ -1,8 +1,8 @@
+import SettingPanel from "@/components/SettingPanel";
 import { useStore } from "@/stores/store";
 import { defineComponent, onBeforeUnmount, onMounted, ref } from "vue";
 import IconEditOutline from "~icons/mdi/edit-outline";
 import IconSettings from "~icons/mdi/settings";
-import SettingPanel from "./SettingPanel";
 
 export default defineComponent(() => {
   const store = useStore();
